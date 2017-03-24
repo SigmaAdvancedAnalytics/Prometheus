@@ -15,7 +15,7 @@ def cli():
 		#initialise the config.ini file
 		script_path = os.path.dirname(sys.argv[0])
 		config = configparser.ConfigParser()
-		config.read(script_path+'/config.ini')
+		config.read('config.ini')
 
 		#set the database connection parameters based on the config.ini file
 		host = config['PostgreSQL_DB']['host']
@@ -88,5 +88,3 @@ def cli():
 				print("Command invalid")
 				print(sys.exc_info())
 				conn.rollback()
-
-cli()

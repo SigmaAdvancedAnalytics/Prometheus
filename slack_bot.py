@@ -1,6 +1,7 @@
 import time
 import os
 from slackclient import SlackClient
+import cli
 
 BOT_TOKEN = os.environ['SLACKBOT_TOKEN']
 CHANNEL_NAME = "test"
