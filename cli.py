@@ -13,7 +13,6 @@ def cli():
 	try:
 		print("\nReading database configuration..")
 		#initialise the config.ini file
-		script_path = os.path.dirname(sys.argv[0])
 		config = configparser.ConfigParser()
 		config.read('config.ini')
 
@@ -88,3 +87,6 @@ def cli():
 				print("Command invalid")
 				print(sys.exc_info())
 				conn.rollback()
+
+if __name__ == '__main__':
+    cli()

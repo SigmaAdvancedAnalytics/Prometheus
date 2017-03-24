@@ -1,7 +1,7 @@
 import time
 import os
 from slackclient import SlackClient
-import cli
+import subprocess
 
 BOT_TOKEN = os.environ['SLACKBOT_TOKEN']
 CHANNEL_NAME = "test"
@@ -25,9 +25,15 @@ def main():
                 if message == "You'll be sentient one day":
                     sc.rtm_send_message(CHANNEL_NAME, "Thanks <@{}> I hope so".format(user))
                     continue
-                sc.rtm_send_message(CHANNEL_NAME, "<@{}> wrote something...".format(user))
+                #command parsing
+                try:
+                    cmd = subprocess.run(message, shell=True, stdout=subprocess.PIPE)
+                    sc.rtm_send_message(CHANNEL_NAME, "{}".format(cmd.stdout.decode('utf-8')))
+                except:
+                    sc.rtm_send_message(CHANNEL_NAME, "Sorry! I don't understand: {}".format(message))
+                    pass
             # Sleep for half a second
-            time.sleep(0.5)
+            time.sleep(0.2)
 
 if __name__ == '__main__':
     main()
