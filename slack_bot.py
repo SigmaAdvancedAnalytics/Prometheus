@@ -33,7 +33,6 @@ def process_terminal_cmd(cmd):
     cmd = cmd.split('cmd')[1]
     cmd = cmd.strip()
     cmd = cmd.split(' ')
-    print(cmd)
     cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
     send_message("_Output:_\n{}".format(cmd_output.decode()))
 
