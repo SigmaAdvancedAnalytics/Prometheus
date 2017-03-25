@@ -1,39 +1,113 @@
-import time
+import logging
 import os
-from slackclient import SlackClient
+import time
+import traceback
 import subprocess
 
-BOT_TOKEN = os.environ['SLACKBOT_TOKEN']
-CHANNEL_NAME = "test"
+# pip install slackclient
+from slackclient import SlackClient
+
+SLACK_BOT_NAME = 'prometheus'
+SLACK_CHANNEL = 'test'
+SLACKBOT_TOKEN = os.environ.get('SLACKBOT_TOKEN')
+
+#retrieve SLACK_BOT_ID and SLACK_BOT_MENTION as this is unqiue per team
+slack_client = SlackClient(SLACKBOT_TOKEN)
+api_call = slack_client.api_call("users.list")
+if api_call.get('ok'):
+    # retrieve all users so we can find our bot
+    users = api_call.get('members')
+    for user in users:
+        if 'name' in user and user.get('name') == SLACK_BOT_NAME.lower():
+            SLACK_BOT_ID = user.get('id')
+            SLACK_BOT_MENTION = '<@%s>' % SLACK_BOT_ID
+else:
+    print("could not find bot user with the name " + SLACK_BOT_NAME)
+
+#begin slackbot helper functions
+def send_message(text):
+    slack_client.rtm_send_message(channel=SLACK_CHANNEL, message=text)
+
+
+def process_terminal_cmd(cmd):
+    cmd = cmd.split('cmd')[1]
+    cmd = cmd.strip()
+    cmd = cmd.split(' ')
+    print(cmd)
+    cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+    send_message("_Output:_\n{}".format(cmd_output.decode()))
+
+def process_deploy(cmd, event):
+    pass
+
+def process_help(*args):
+    pass
+
+def process_event(event):
+    # filter out slack events that are not for us
+    text = event.get('text')
+    if text is None or not text.startswith((SLACK_BOT_NAME, SLACK_BOT_MENTION)):
+        return
+
+    # make sure our bot is only called for a specified channel
+    channel = event.get('channel')
+    if channel is None:
+        return
+    if channel != slack_client.server.channels.find(SLACK_CHANNEL).id:
+        slack_client.rtm_send_message(channel = channel, message ='<@{user}> I only run tasks asked from `{channel}` channel'.format(user=event['user'],
+                                                                                                                                    channel=SLACK_CHANNEL))
+        return
+
+    # remove bot name and extract command
+    if text.startswith(SLACK_BOT_MENTION):
+        cmd = text.split('%s' % SLACK_BOT_MENTION)[1]
+        cmd = cmd.strip()
+    else:
+        cmd = text.split('%s ' % SLACK_BOT_NAME)[1]
+
+    # process command
+    try:
+        if cmd.startswith('cmd'):
+            process_terminal_cmd(cmd)
+        elif cmd.startswith('deploy'):
+            process_deploy(cmd, event)
+        else:
+            send_message("*I don't know how to do that*: `%s`" % cmd)
+    except HelpException:
+        return process_help()
+
+
+def process_events(events):
+    for event in events:
+        try:
+            process_event(event)
+        except Exception as e:
+            logging.exception(e)
+            msg = '%s: %s\n%s' % (e.__class__.__name__, e, traceback.format_exc())
+            send_message(msg)
+
 
 def main():
-    # Create the slackclient instance
-    sc = SlackClient(BOT_TOKEN)
+    if slack_client.rtm_connect():
+        send_message('_starting..._')
 
-    # Connect to slack
-    if sc.rtm_connect():
-        # Send first message
-        sc.rtm_send_message(CHANNEL_NAME, "I'm ALIVE!!!")
+        # --
+        # Here is a good place to init git repositories if needed, in order to provide git-based features:
+        # - list of commits to deploy
+        # - history of deployments
+        # - status of deployed services vs what's available in git
+
+        send_message("*All right, I'm ready, ask me anything!*")
 
         while True:
-            # Read latest messages
-            for slack_message in sc.rtm_read():
-                message = slack_message.get("text")
-                user = slack_message.get("user")
-                if not message or not user:
-                    continue
-                if message == "You'll be sentient one day":
-                    sc.rtm_send_message(CHANNEL_NAME, "Thanks <@{}> I hope so".format(user))
-                    continue
-                #command parsing
-                try:
-                    cmd = subprocess.run(message, shell=True, stdout=subprocess.PIPE)
-                    sc.rtm_send_message(CHANNEL_NAME, "{}".format(cmd.stdout.decode('utf-8')))
-                except:
-                    sc.rtm_send_message(CHANNEL_NAME, "Sorry! I don't understand: {}".format(message))
-                    pass
-            # Sleep for half a second
-            time.sleep(0.2)
+            events = slack_client.rtm_read()
+            if events:
+                logging.info(events)
+            process_events(events)
+            time.sleep(0.1)
+    else:
+        logging.error('Connection Failed, invalid token?')
+
 
 if __name__ == '__main__':
     main()
