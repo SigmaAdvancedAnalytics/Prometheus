@@ -38,10 +38,10 @@ def process_terminal_cmd(cmd):
         send_message("*!!!ADMIN MODE DEACTIVATED!!!*")
     else:
         cmd = cmd.split(' ')
-        send_message("_Executing.._")
+        send_message("_Executing.._\n_Output:_")
         with Popen(cmd, stdout=PIPE, stderr=PIPE) as p:
             for line in p.stdout:
-                send_message("_Output:_\n{}".format(line.decode()))
+                send_message("{}".format(line.decode()))
 
 def process_deploy(cmd, event):
     pass
