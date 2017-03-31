@@ -39,7 +39,7 @@ def process_terminal_cmd(cmd):
     else:
         cmd = cmd.split(' ')
         send_message("_Executing.._")
-        with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as p:
+        with Popen(cmd, stdout=PIPE, stderr=PIPE) as p:
             for line in p.stdout:
                 send_message("_Output:_\n{}".format(line.decode()))
 
