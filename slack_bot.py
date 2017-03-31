@@ -50,7 +50,7 @@ def process_help(*args):
     pass
 
 def process_event(event):
-    #import global admin state
+    #import global admin state and bot name
     global ADMIN_MODE
     
     # filter out slack events that are not for us
@@ -59,8 +59,8 @@ def process_event(event):
         return
     
     # stop einstein from replying to itself
-    user=event['user']
-    if user is None:
+    user=event.get('user')
+    if user == SLACK_BOT_NAME.lower():
         return
 
     # make sure our bot is only called for a specified channel
