@@ -39,12 +39,10 @@ def process_terminal_cmd(cmd):
     else:
         cmd = cmd.split(' ')
         send_message("_Executing.._\n_Output:_")
-        with Popen(cmd, stdout=PIPE) as out, Popen(cmd, stderr=PIPE) as err:
-            if out is not None:
-                for line in out.stdout:
+        with Popen(cmd, stdout=PIPE, stderr=PIPE) as p:
+            for line in p.stdout:
                     send_message("{}".format(line.decode()))
-            if err is not None:
-                for line in err.stdout:
+            for line in p.stderr:
                     send_message("{}".format(line.decode()))
 
 def process_deploy(cmd, event):
