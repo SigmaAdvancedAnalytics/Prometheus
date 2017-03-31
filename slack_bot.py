@@ -33,7 +33,8 @@ def send_message(text):
 
 def process_terminal_cmd(cmd):
     if cmd.startswith('deactivate admin'):
-        ADMIN_MODE = False
+        global 
+        _MODE = False
         send_message("*!!!ADMIN MODE DEACTIVATED!!!*")
     else:
         cmd = cmd.split(' ')
@@ -71,17 +72,17 @@ def process_event(event):
 
     # process command
     try:
-        if ADMIN_MODE:
+        if global ADMIN_MODE:
             process_terminal_cmd(cmd)
         elif cmd.startswith('activate admin'):
-            ADMIN_MODE = True
+            global ADMIN_MODE = True
             send_message('*!!!ADMIN MODE ACTIVATED!!!*')
         elif cmd.startswith('deploy'):
             process_deploy(cmd, event)
         else:
             send_message("*I don't know how to do that*: `%s`" % cmd)
     except:
-        send_message("*Exception thrown while executing*:",sys.exc_info()[0])
+        send_message("*Exception thrown while executing*: `%s`" % sys.exc_info()[0])
 
 
 def process_events(events):
