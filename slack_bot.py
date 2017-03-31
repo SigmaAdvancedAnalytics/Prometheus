@@ -41,7 +41,11 @@ def process_terminal_cmd(cmd):
         send_message("_Executing.._\n_Output:_")
         with Popen(cmd, stdout=PIPE, stderr=PIPE) as p:
             for line in p.stdout:
-                send_message("{}".format(line.decode()))
+                out, err = line.communicate()
+                if out:
+                    send_message("{}".format(out.decode()))
+                if err:
+                    send_message("{}".format(err.decode()))
 
 def process_deploy(cmd, event):
     pass
