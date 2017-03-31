@@ -56,13 +56,18 @@ def process_event(event):
     text = event.get('text')
     if text is None:
         return
+    
+    # stop einstein from replying to itself
+    user=event['user']
+    if user is None:
+        return
 
     # make sure our bot is only called for a specified channel
     channel = event.get('channel')
     if channel is None:
         return
     if channel != slack_client.server.channels.find(SLACK_CHANNEL).id:
-        slack_client.rtm_send_message(channel = channel, message ='<@{user}> I only run tasks asked from `{channel}` channel'.format(user=event['user'],
+        slack_client.rtm_send_message(channel = channel, message ='<@{user}> I only run tasks asked from `{channel}` channel'.format(user,
                                                                                                                                     channel=SLACK_CHANNEL))
         return
 
