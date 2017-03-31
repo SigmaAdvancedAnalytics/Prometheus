@@ -49,6 +49,9 @@ def process_help(*args):
     pass
 
 def process_event(event):
+    #import global admin state
+    global ADMIN_MODE
+    
     # filter out slack events that are not for us
     text = event.get('text')
     if text is None:
@@ -72,10 +75,9 @@ def process_event(event):
 
     # process command
     try:
-        if global ADMIN_MODE:
+        if ADMIN_MODE:
             process_terminal_cmd(cmd)
         elif cmd.startswith('activate admin'):
-            global ADMIN_MODE 
             ADMIN_MODE = True
             send_message('*!!!ADMIN MODE ACTIVATED!!!*')
         elif cmd.startswith('deploy'):
