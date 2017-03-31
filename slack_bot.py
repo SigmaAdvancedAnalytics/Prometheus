@@ -40,10 +40,10 @@ def process_terminal_cmd(cmd):
         cmd = cmd.split(' ')
         send_message("_Executing.._\n_Output:_")
         with Popen(cmd, stdout=PIPE) as out, Popen(cmd, stderr=PIPE) as err:
-            if out:
+            if out is not None:
                 for line in out.stdout:
                     send_message("{}".format(line.decode()))
-            if err:
+            if err is not None:
                 for line in err.stdout:
                     send_message("{}".format(line.decode()))
 
