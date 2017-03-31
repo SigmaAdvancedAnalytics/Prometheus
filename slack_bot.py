@@ -39,6 +39,7 @@ def process_terminal_cmd(cmd):
         send_message("*!!!ADMIN MODE DEACTIVATED!!!*")
     else:
         cmd = cmd.split(' ')
+        cmd = cmd.replace('<','').replace('>','')
         send_message("_Executing.._\n_Output:_")
         with Popen(cmd, stdout=PIPE, stderr=PIPE, cwd=SHELL_DIR) as p:
             for line in p.stdout:
