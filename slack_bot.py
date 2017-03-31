@@ -91,7 +91,7 @@ def process_event(event):
         else:
             send_message("*I don't know how to do that*: `%s`" % cmd)
     except:
-        send_message("*Exception thrown while executing*: `%s`" % sys.exc_info()[0])
+        send_message("*Exception thrown while executing*: `%s`" % sys.exc_info())
 
 
 def process_events(events):
