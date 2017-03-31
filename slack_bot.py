@@ -74,7 +74,7 @@ def process_event(event):
         if ADMIN_MODE:
             process_terminal_cmd(cmd)
         elif cmd.startswith('activate admin'):
-            send_message("*!!!ADMIN MODE ACTIVATED!!!*)
+            send_message('*!!!ADMIN MODE ACTIVATED!!!*')
         elif cmd.startswith('deploy'):
             process_deploy(cmd, event)
         else:
