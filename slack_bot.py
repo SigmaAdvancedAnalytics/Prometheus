@@ -31,7 +31,6 @@ def send_message(text):
 
 
 def process_terminal_cmd(cmd):
-    cmd = cmd.strip()
     if cmd.startswith('deactivate admin'):
         ADMIN_MODE = False
         send_message("*!!!ADMIN MODE DEACTIVATED!!!*")
@@ -67,7 +66,7 @@ def process_event(event):
         cmd = text.split('%s' % SLACK_BOT_MENTION)[1]
         cmd = cmd.strip()
     else:
-        cmd = text.split('%s ' % SLACK_BOT_NAME)[1]
+        cmd = text.strip()
 
     # process command
     try:
