@@ -33,8 +33,7 @@ def send_message(text):
 
 def process_terminal_cmd(cmd):
     if cmd.startswith('deactivate admin'):
-        global 
-        _MODE = False
+        global ADMIN_MODE = False
         send_message("*!!!ADMIN MODE DEACTIVATED!!!*")
     else:
         cmd = cmd.split(' ')
