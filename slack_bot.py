@@ -39,7 +39,7 @@ def process_terminal_cmd(cmd):
     else:
         cmd = cmd.split(' ')
         send_message("_Executing.._")
-        cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+        cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
         send_message("_Output:_\n{}".format(cmd_output.decode()))
 
 def process_deploy(cmd, event):
