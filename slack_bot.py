@@ -21,8 +21,10 @@ if api_call.get('ok'):
         if 'name' in user and user.get('name') == SLACK_BOT_NAME.lower():
             SLACK_BOT_ID = user.get('id')
             SLACK_BOT_MENTION = '<@%s>' % SLACK_BOT_ID
+        else:
+            print("could not find bot user with the name " + SLACK_BOT_NAME)
 else:
-    print("could not find bot user with the name " + SLACK_BOT_NAME)
+            print("api-call failed for token " + SLACKBOT_TOKEN)
 
 #begin slackbot helper functions
 def send_message(text):
