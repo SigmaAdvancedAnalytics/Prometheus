@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import traceback
-import subprocess
+from subprocess import Popen, PIPE
 
 # pip install slackclient
 from slackclient import SlackClient
@@ -39,8 +39,9 @@ def process_terminal_cmd(cmd):
     else:
         cmd = cmd.split(' ')
         send_message("_Executing.._")
-        cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
-        send_message("_Output:_\n{}".format(cmd_output.decode()))
+        with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as p:
+            for line in p.stdout:
+                send_message("_Output:_\n{}".format(line.decode()))
 
 def process_deploy(cmd, event):
     pass
