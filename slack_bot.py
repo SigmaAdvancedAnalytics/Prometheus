@@ -47,7 +47,7 @@ def process_terminal_cmd(cmd):
                     send_message("_exception:_`{}`".format(line.decode()))
 
 def process_deploy(cmd, event):
-    pass
+    exit()
 
 def process_help(*args):
     pass
@@ -89,8 +89,8 @@ def process_event(event):
         elif cmd.startswith('activate admin'):
             ADMIN_MODE = True
             send_message('*!!!ADMIN MODE ACTIVATED!!!*')
-        elif cmd.startswith('deploy'):
-            process_deploy(cmd, event)
+        elif cmd.startswith('goodbye'):
+            process_deploy()
         else:
             send_message("*I don't know how to do that*: `%s`" % cmd)
     except:
