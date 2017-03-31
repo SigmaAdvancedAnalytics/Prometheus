@@ -42,9 +42,9 @@ def process_terminal_cmd(cmd):
         send_message("_Executing.._\n_Output:_")
         with Popen(cmd, stdout=PIPE, stderr=PIPE, cwd=SHELL_DIR) as p:
             for line in p.stdout:
-                    send_message("`{}`".format(line.decode()))
+                    send_message("{}".format(line.decode()))
             for line in p.stderr:
-                    send_message("_exception:_`{}`".format(line.decode()))
+                    send_message("exception: {}".format(line.decode()))
 
 def process_deploy(cmd, event):
     exit()
