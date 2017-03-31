@@ -12,6 +12,7 @@ SLACK_BOT_NAME = 'prometheus'
 SLACK_CHANNEL = 'test'
 SLACKBOT_TOKEN = os.environ.get('SLACKBOT_TOKEN')
 ADMIN_MODE = False
+SHELL_DIR = "/home/ec2-user"
 
 #retrieve SLACK_BOT_ID and SLACK_BOT_MENTION as this is unqiue per team
 slack_client = SlackClient(SLACKBOT_TOKEN)
@@ -39,7 +40,7 @@ def process_terminal_cmd(cmd):
     else:
         cmd = cmd.split(' ')
         send_message("_Executing.._\n_Output:_")
-        with Popen(cmd, stdout=PIPE, stderr=PIPE) as p:
+        with Popen(cmd, stdout=PIPE, stderr=PIPE, cwd=SHELL_DIR) as p:
             for line in p.stdout:
                     send_message("`{}`".format(line.decode()))
             for line in p.stderr:
