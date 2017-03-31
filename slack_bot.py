@@ -34,7 +34,7 @@ def process_terminal_cmd(cmd):
     cmd = cmd.strip()
     if cmd.startswith('deactivate admin'):
         ADMIN_MODE = False
-        send_message("*!!!ADMIN MODE DEACTIVATED!!!*)
+        send_message("*!!!ADMIN MODE DEACTIVATED!!!*")
     else:
         cmd = cmd.split(' ')
         send_message("_Executing.._")
