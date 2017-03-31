@@ -10,6 +10,7 @@ from slackclient import SlackClient
 SLACK_BOT_NAME = 'prometheus'
 SLACK_CHANNEL = 'test'
 SLACKBOT_TOKEN = os.environ.get('SLACKBOT_TOKEN')
+ADMIN_MODE = False
 
 #retrieve SLACK_BOT_ID and SLACK_BOT_MENTION as this is unqiue per team
 slack_client = SlackClient(SLACKBOT_TOKEN)
@@ -21,8 +22,6 @@ if api_call.get('ok'):
         if 'name' in user and user.get('name') == SLACK_BOT_NAME.lower():
             SLACK_BOT_ID = user.get('id')
             SLACK_BOT_MENTION = '<@%s>' % SLACK_BOT_ID
-        else:
-            print("could not find bot user with the name " + SLACK_BOT_NAME)
 else:
             print("api-call failed for token " + SLACKBOT_TOKEN)
 
@@ -32,11 +31,15 @@ def send_message(text):
 
 
 def process_terminal_cmd(cmd):
-    cmd = cmd.split('cmd')[1]
     cmd = cmd.strip()
-    cmd = cmd.split(' ')
-    cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    send_message("_Output:_\n{}".format(cmd_output.decode()))
+    if cmd.startswith('deactivate admin'):
+        ADMIN_MODE = False
+        send_message("*!!!ADMIN MODE DEACTIVATED!!!*)
+    else:
+        cmd = cmd.split(' ')
+        send_message("_Executing.._")
+        cmd_output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+        send_message("_Output:_\n{}".format(cmd_output.decode()))
 
 def process_deploy(cmd, event):
     pass
@@ -47,7 +50,7 @@ def process_help(*args):
 def process_event(event):
     # filter out slack events that are not for us
     text = event.get('text')
-    if text is None or not text.startswith((SLACK_BOT_NAME, SLACK_BOT_MENTION)):
+    if text is None:
         return
 
     # make sure our bot is only called for a specified channel
@@ -68,13 +71,15 @@ def process_event(event):
 
     # process command
     try:
-        if cmd.startswith('cmd'):
+        if ADMIN_MODE:
             process_terminal_cmd(cmd)
+        elif cmd.startswith('activate admin'):
+            send_message("*!!!ADMIN MODE ACTIVATED!!!*)
         elif cmd.startswith('deploy'):
             process_deploy(cmd, event)
         else:
             send_message("*I don't know how to do that*: `%s`" % cmd)
-    except HelpException:
+    except:
         send_message("*I don't know how to do that*: `%s`" % cmd)
 
 
