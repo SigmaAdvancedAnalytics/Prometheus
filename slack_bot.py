@@ -45,9 +45,9 @@ def process_terminal_cmd(cmd):
             for line in p.stdout:
                     send_message("{}".format(line.decode()))
             for line in p.stderr:
-                    send_message("exception: {}".format(line.decode()))
+                    send_message("{}".format(line.decode()))
 
-def process_deploy(cmd, event):
+def process_deploy():
     exit()
 
 def process_help(*args):
