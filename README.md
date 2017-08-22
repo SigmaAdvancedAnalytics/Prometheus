@@ -4,7 +4,7 @@ A dockerized python slackbot used to:
 - [ ] Trigger terraform updates   
 - [ ] Become our own personal Jarvis  
 
-### usage
+### Usage
 0) Install docker  
 1) Clone repository locally  
 2) Replace slackbot information in slack_bot.py with your team/channel info  
